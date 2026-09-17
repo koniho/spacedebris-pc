@@ -200,11 +200,9 @@ jobs:
         run: sha256sum * > SHA256SUMS
 
       - name: Publish GitHub release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release create "$GITHUB_REF_NAME" release-assets/* \
-            --repo "$GITHUB_REPOSITORY" \
-            --verify-tag \
-            --title "Space Debris $GITHUB_REF_NAME" \
-            --generate-notes
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Space Debris ${{ github.ref_name }}
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: release-assets/*

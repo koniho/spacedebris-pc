@@ -1,0 +1,45 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/">
+        <!-- Assets (SVG files) -->
+        <file>assets/face-left-down.svg</file>
+        <file>assets/face-left-up.svg</file>
+        <file>assets/face-right-down.svg</file>
+        <file>assets/face-right-up.svg</file>
+
+        <!-- Fonts -->
+        <file>fonts/orbitron-black.otf</file>
+        <file>fonts/orbitron-bold.otf</file>
+        <file>fonts/orbitron-light.otf</file>
+        <file>fonts/orbitron-medium.otf</file>
+
+        <!-- Sound Effects (WAV) -->
+        <file>sounds/denied_1.wav</file>
+        <file>sounds/denied_2.wav</file>
+        <file>sounds/disablecone.wav</file>
+        <file>sounds/explosion_1.wav</file>
+        <file>sounds/explosion_2.wav</file>
+        <file>sounds/firecone.wav</file>
+        <file>sounds/laser_1.wav</file>
+        <file>sounds/laser_2.wav</file>
+        <file>sounds/laser_3.wav</file>
+        <file>sounds/minor_scale_shifted_0_-5st.wav</file>
+        <file>sounds/minor_scale_shifted_1_-3st.wav</file>
+        <file>sounds/minor_scale_shifted_2_-2st.wav</file>
+        <file>sounds/minor_scale_shifted_3_+0st.wav</file>
+        <file>sounds/minor_scale_shifted_5_+3st.wav</file>
+        <file>sounds/minor_scale_shifted_6_+5st.wav</file>
+        <file>sounds/minor_scale_shifted_7_+7st.wav</file>
+        <file>sounds/player_hit.wav</file>
+        <file>sounds/player_hit_2.wav</file>
+        <file>sounds/thunder_1.wav</file>
+        <file>sounds/twinkle.wav</file>
+        <file>sounds/whoosh_1.wav</file>
+        <file>sounds/whoosh_2.wav</file>
+
+        <!-- Music (MP3) -->
+        <file>sounds/gameover.mp3</file>
+        <file>sounds/spacedebris-loop.mp3</file>
+        <file>sounds/youwin.mp3</file>
+    </qresource>
+</RCC>

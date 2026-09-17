@@ -1,11 +1,11 @@
 # -*- mode: python ; coding: utf-8 -*-
 """
-PyInstaller spec file for Space Debris - Windows onefile build
+PyInstaller spec file for Space Debris - Windows onedir build
 
 Build steps:
 1. Compile Qt resources: pyrcc5 resources.qrc -o resources_rc.py
 2. Build exe: pyinstaller space-debris-windows.spec
-3. Output: dist/Space Debris.exe (single file)
+3. Output: dist/Space Debris/Space Debris.exe
 """
 
 from pathlib import Path
@@ -32,7 +32,6 @@ a = Analysis(
         'PyQt5.QtMultimedia',
         'pyqtgraph',
         'numpy',
-        'opensimplex',
     ],
     hookspath=[],
     hooksconfig={},
@@ -54,10 +53,8 @@ pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
     [],
+    exclude_binaries=True,
     name='Space Debris',
     debug=False,
     bootloader_ignore_signals=False,
@@ -71,5 +68,16 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=None,  # Set to 'assets/icon.ico' if you create an icon
+    icon='assets/space-debris.ico',
+)
+
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name='Space Debris',
 )

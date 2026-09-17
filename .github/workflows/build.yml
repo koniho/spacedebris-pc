@@ -87,13 +87,22 @@ jobs:
       - name: Smoke test Linux package
         if: matrix.platform == 'linux'
         run: |
-          xvfb-run -a sh -c '
+          set +e
+          smoke_output="$(xvfb-run -a sh -c '
             openbox >/tmp/space-debris-openbox.log 2>&1 &
             window_manager_pid=$!
             trap "kill $window_manager_pid" EXIT
             sleep 1
             "$1" --smoke-test
-          ' sh "dist/Space Debris/Space Debris"
+          ' sh "dist/Space Debris/Space Debris" 2>&1)"
+          smoke_status=$?
+          set -e
+          printf '%s\n' "$smoke_output"
+          if [ "$smoke_status" -ne 0 ]; then
+            annotation="$(printf '%s' "$smoke_output" | tr '\n' ' ' | head -c 1000)"
+            echo "::error title=Linux package failed to launch::$annotation"
+            exit "$smoke_status"
+          fi
 
       - name: Validate macOS release-signing secrets
         if: matrix.platform == 'macos' && (startsWith(github.ref, 'refs/tags/v') || inputs.sign_macos)

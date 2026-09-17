@@ -48,7 +48,7 @@ jobs:
         if: matrix.platform == 'linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libegl1 libgl1 libpulse-mainloop-glib0 upx-ucl
+          sudo apt-get install -y libegl1 libgl1 libpulse-mainloop-glib0 upx-ucl xvfb
 
       - name: Install Windows executable compressor
         if: matrix.platform == 'windows'
@@ -86,9 +86,7 @@ jobs:
 
       - name: Smoke test Linux package
         if: matrix.platform == 'linux'
-        env:
-          QT_QPA_PLATFORM: offscreen
-        run: '"dist/Space Debris/Space Debris" --smoke-test'
+        run: xvfb-run -a "dist/Space Debris/Space Debris" --smoke-test
 
       - name: Validate macOS release-signing secrets
         if: matrix.platform == 'macos' && (startsWith(github.ref, 'refs/tags/v') || inputs.sign_macos)

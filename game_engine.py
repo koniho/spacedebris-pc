@@ -57,13 +57,15 @@ WAVES_PER_BOSS = 4
 class GameEngine:
     """Core game engine managing game state and components."""
 
-    def __init__(self, view):
+    def __init__(self, view, debug=False):
         """Initialize game engine.
 
         Args:
             view: The pyqtgraph view to render on.
+            debug: Whether developer-only controls are enabled.
         """
         self.view = view
+        self.debug = debug
         self.config = GameConfig()
         self.state = (
             "intro"  # 'intro', 'playing', 'paused', 'death_sequence', 'game_over', 'you_win'
@@ -132,9 +134,10 @@ class GameEngine:
         self.player_waveform = None  # Created when game starts
         self.engagement_crosshair = None  # Created when game starts
 
-        # Initialize configuration UI early so it can be used in intro/game_over screens
-        self.config_ui = ConfigUI(self)
-        self.config_ui.restart_requested.connect(self._restart_game)
+        # The developer console must not exist in release-mode sessions.
+        self.config_ui = ConfigUI(self) if self.debug else None
+        if self.config_ui is not None:
+            self.config_ui.restart_requested.connect(self._restart_game)
         self.sequence_generator = SequenceGenerator()
         self.spawning_manager = SpawningManager()
         self.screen_bottom = -300
@@ -219,9 +222,10 @@ class GameEngine:
 
     def on_key_press(self, key: str, timestamp: int):
         """Handle key press event."""
-        # Handle backtick key to toggle config UI (available in all states)
+        # Backtick is reserved for the developer console and ignored in release mode.
         if key == "`":
-            self.config_ui.toggle_ui()
+            if self.config_ui is not None:
+                self.config_ui.toggle_ui()
             return
 
         if key == "M":

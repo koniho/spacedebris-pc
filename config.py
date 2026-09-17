@@ -6,6 +6,8 @@ from dataclasses import dataclass, asdict, field
 from enum import Enum
 from typing import Dict, List, Optional, Tuple
 
+from app_paths import get_bundled_config_dir, get_user_data_dir
+
 
 class DifficultyLevel(Enum):
     """Game difficulty levels."""
@@ -251,13 +253,19 @@ class GameConfig:
     visual_effects: VisualEffectsConfig = field(default_factory=VisualEffectsConfig)
     spawning: SpawningConfig = field(default_factory=SpawningConfig)
     config_dir: str = field(
-        default_factory=lambda: os.path.join(os.path.dirname(__file__), "config")
+        default_factory=lambda: str(get_user_data_dir() / "config")
     )
 
     def __post_init__(self):
         """Load all configurations after initialization."""
+        defaults_dir = get_bundled_config_dir()
         effects_file = os.path.join(self.config_dir, "visual_effects.json")
         spawning_file = os.path.join(self.config_dir, "spawning.json")
+
+        if not os.path.exists(effects_file):
+            effects_file = str(defaults_dir / "visual_effects.json")
+        if not os.path.exists(spawning_file):
+            spawning_file = str(defaults_dir / "spawning.json")
 
         self.visual_effects = VisualEffectsConfig.load_from_file(effects_file)
         self.spawning = SpawningConfig.load_from_file(spawning_file)

@@ -1,0 +1,99 @@
+name: Build distributions
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows
+          - os: macos-latest
+            platform: macos
+          - os: ubuntu-latest
+            platform: linux
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install Linux runtime libraries
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1 libpulse-mainloop-glib0
+
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements-build.txt
+
+      - name: Compile Qt resources
+        run: python -m PyQt5.pyrcc_main resources.qrc -o resources_rc.py
+
+      - name: Build Windows
+        if: matrix.platform == 'windows'
+        run: python -m PyInstaller --noconfirm --clean space-debris-windows.spec
+
+      - name: Build macOS
+        if: matrix.platform == 'macos'
+        run: python -m PyInstaller --noconfirm --clean space-debris-macos.spec
+
+      - name: Build Linux
+        if: matrix.platform == 'linux'
+        run: python -m PyInstaller --noconfirm --clean space-debris-linux.spec
+
+      - name: Smoke test Windows package
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        run: |
+          $process = Start-Process -FilePath "dist/Space Debris/Space Debris.exe" -ArgumentList "--smoke-test" -Wait -PassThru
+          if ($process.ExitCode -ne 0) { exit $process.ExitCode }
+
+      - name: Smoke test macOS package
+        if: matrix.platform == 'macos'
+        run: '"dist/Space Debris.app/Contents/MacOS/Space Debris" --smoke-test'
+
+      - name: Smoke test Linux package
+        if: matrix.platform == 'linux'
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: '"dist/Space Debris/Space Debris" --smoke-test'
+
+      - name: Ad-hoc sign macOS package
+        if: matrix.platform == 'macos'
+        run: codesign --force --deep --sign - "dist/Space Debris.app"
+
+      - name: Archive Windows package
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        run: Compress-Archive -Path "dist/Space Debris" -DestinationPath "space-debris-windows-${{ runner.arch }}.zip"
+
+      - name: Archive macOS package
+        if: matrix.platform == 'macos'
+        run: ditto -c -k --keepParent "dist/Space Debris.app" "space-debris-macos-${{ runner.arch }}.zip"
+
+      - name: Archive Linux package
+        if: matrix.platform == 'linux'
+        run: tar -C dist -czf "space-debris-linux-${{ runner.arch }}.tar.gz" "Space Debris"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: space-debris-${{ matrix.platform }}-${{ runner.arch }}
+          path: space-debris-*
+          if-no-files-found: error
+          retention-days: 14

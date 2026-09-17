@@ -205,7 +205,10 @@ def main():
     if args.smoke_test:
 
         def finish_smoke_test():
-            exit_code = 0 if window.isFullScreen() else 1
+            # CI display servers do not consistently acknowledge fullscreen
+            # requests, but visibility still verifies that the packaged Qt
+            # application initialized and entered its event loop.
+            exit_code = 0 if window.isVisible() else 1
             window.close()
             app.exit(exit_code)
 

@@ -25,16 +25,7 @@ a = Analysis(
         # They'll be copied to the bundle but user should copy to ~/Library/Application Support
         ('config', 'config'),
     ],
-    hiddenimports=[
-        'resources_rc',
-        'PyQt5',
-        'PyQt5.QtCore',
-        'PyQt5.QtWidgets',
-        'PyQt5.QtGui',
-        'PyQt5.QtMultimedia',
-        'pyqtgraph',
-        'numpy',
-    ],
+    hiddenimports=['resources_rc'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -43,12 +34,56 @@ a = Analysis(
         'matplotlib',
         'scipy',
         'pandas',
+        'PyQt5.QtBluetooth',
+        'PyQt5.QtDBus',
+        'PyQt5.QtDesigner',
+        'PyQt5.QtHelp',
+        'PyQt5.QtLocation',
+        'PyQt5.QtMultimediaWidgets',
+        'PyQt5.QtNetworkAuth',
+        'PyQt5.QtNfc',
+        'PyQt5.QtPositioning',
+        'PyQt5.QtPrintSupport',
+        'PyQt5.QtQml',
+        'PyQt5.QtQuick',
+        'PyQt5.QtQuickWidgets',
+        'PyQt5.QtRemoteObjects',
+        'PyQt5.QtSensors',
+        'PyQt5.QtSerialPort',
+        'PyQt5.QtSql',
+        'PyQt5.QtSvg',
+        'PyQt5.QtTest',
+        'PyQt5.QtTextToSpeech',
+        'PyQt5.QtWebChannel',
+        'PyQt5.QtWebEngine',
+        'PyQt5.QtWebEngineCore',
+        'PyQt5.QtWebEngineWidgets',
+        'PyQt5.QtWebSockets',
+        'PyQt5.QtXml',
+        'PyQt5.QtXmlPatterns',
     ],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
     noarchive=False,
 )
+
+# Retain only plugin families used for rendering and audio playback.
+qt_plugin_families = {'platforms', 'imageformats', 'audio', 'mediaservice', 'playlistformats'}
+unused_qt_libraries = ('qt5qml', 'qtqml.framework', 'qt5quick', 'qtquick.framework',
+                       'qt5websockets', 'qtwebsockets.framework')
+a.binaries = [
+    entry for entry in a.binaries
+    if (
+        '/plugins/' not in entry[0].replace('\\', '/')
+        or (
+            entry[0].replace('\\', '/').split('/plugins/', 1)[1].split('/', 1)[0]
+            in qt_plugin_families
+            and 'qwebgl' not in entry[0].lower()
+        )
+    )
+    and not any(name in entry[0].lower() for name in unused_qt_libraries)
+]
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
@@ -61,7 +96,7 @@ exe = EXE(
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
+    upx=False,
     console=False,  # No terminal window on macOS
     disable_windowed_traceback=False,
     argv_emulation=True,  # macOS: support file drops and argv
@@ -76,7 +111,7 @@ coll = COLLECT(
     a.zipfiles,
     a.datas,
     strip=False,
-    upx=True,
+    upx=False,
     upx_exclude=[],
     name='Space Debris',
 )

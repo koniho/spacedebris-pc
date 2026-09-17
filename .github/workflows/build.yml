@@ -30,7 +30,8 @@ jobs:
           - os: macos-15-intel
             platform: macos
             architecture: x64
-          - os: ubuntu-latest
+          # Build against glibc 2.35 so the binary runs on older distributions.
+          - os: ubuntu-22.04
             platform: linux
 
     runs-on: ${{ matrix.os }}
@@ -47,7 +48,12 @@ jobs:
         if: matrix.platform == 'linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libegl1 libgl1 libpulse-mainloop-glib0
+          sudo apt-get install -y libegl1 libgl1 libpulse-mainloop-glib0 upx-ucl
+
+      - name: Install Windows executable compressor
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        run: choco install upx --no-progress --yes
 
       - name: Install Python dependencies
         run: python -m pip install -r requirements-build.txt

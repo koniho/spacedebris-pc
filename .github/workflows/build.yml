@@ -48,7 +48,7 @@ jobs:
         if: matrix.platform == 'linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libegl1 libgl1 libpulse-mainloop-glib0 upx-ucl xvfb
+          sudo apt-get install -y libegl1 libgl1 libpulse-mainloop-glib0 openbox upx-ucl xvfb
 
       - name: Install Windows executable compressor
         if: matrix.platform == 'windows'
@@ -86,7 +86,14 @@ jobs:
 
       - name: Smoke test Linux package
         if: matrix.platform == 'linux'
-        run: xvfb-run -a "dist/Space Debris/Space Debris" --smoke-test
+        run: |
+          xvfb-run -a sh -c '
+            openbox >/tmp/space-debris-openbox.log 2>&1 &
+            window_manager_pid=$!
+            trap "kill $window_manager_pid" EXIT
+            sleep 1
+            "$1" --smoke-test
+          ' sh "dist/Space Debris/Space Debris"
 
       - name: Validate macOS release-signing secrets
         if: matrix.platform == 'macos' && (startsWith(github.ref, 'refs/tags/v') || inputs.sign_macos)

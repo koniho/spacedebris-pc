@@ -1,6 +1,7 @@
 """Centralized random manager for deterministic game behavior."""
 
 import random
+from debug_log import debug_print as print
 import numpy as np
 
 

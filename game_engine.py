@@ -2,6 +2,7 @@
 
 # Initialize sound manager early so it can be used by intro screen
 import os
+from debug_log import debug_print as print
 import sys
 
 from PyQt5.QtCore import QFile, QRectF

@@ -1,6 +1,7 @@
 """Boss enemy implementation with force field and projectiles."""
 
 import math
+from debug_log import debug_print as print
 import random_manager
 from typing import List, Tuple, Optional
 import numpy as np

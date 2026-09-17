@@ -1,6 +1,7 @@
 """Death animation classes for enemies."""
 
 import math
+from debug_log import debug_print as print
 import pyqtgraph as pg
 from font_manager import font_manager
 from config import get_button_label

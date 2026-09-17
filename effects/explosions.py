@@ -1,6 +1,7 @@
 """Explosion effects."""
 
 import math
+from debug_log import debug_print as print
 import numpy as np
 import pyqtgraph as pg
 from typing import List, Tuple

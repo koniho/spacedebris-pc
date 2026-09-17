@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtCore import QTimer, Qt, QElapsedTimer
 from PyQt5.QtGui import QKeyEvent
 import pyqtgraph as pg
+from debug_log import debug_print as print
 
 # Try to import compiled Qt resources (for bundled app)
 try:
@@ -135,6 +136,11 @@ def main():
         default=None,
         metavar="FILE",
         help="Replay key presses from FILE (e.g., --replay session.json)",
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Enable diagnostic console logging",
     )
     parser.add_argument(
         "-a",

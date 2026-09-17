@@ -1,6 +1,7 @@
 """Sound manager using PyQt5."""
 
 import os
+from debug_log import debug_print as print
 import random
 from typing import List
 from PyQt5.QtCore import QUrl, QFile

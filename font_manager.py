@@ -3,6 +3,7 @@
 from PyQt5.QtGui import QFont, QFontDatabase
 from PyQt5.QtCore import Qt, QFile, QIODevice
 import os
+from debug_log import debug_print as print
 
 
 class FontManager:

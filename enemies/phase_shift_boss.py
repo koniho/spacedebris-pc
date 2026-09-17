@@ -4,6 +4,7 @@ import time
 import random
 import random_manager
 import math
+from debug_log import debug_print as print
 from typing import Tuple
 import numpy as np
 import pyqtgraph as pg

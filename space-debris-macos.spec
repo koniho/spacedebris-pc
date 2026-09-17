@@ -34,7 +34,6 @@ a = Analysis(
         'PyQt5.QtMultimedia',
         'pyqtgraph',
         'numpy',
-        'opensimplex',
     ],
     hookspath=[],
     hooksconfig={},
@@ -86,7 +85,7 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name='Space Debris.app',
-    icon=None,  # Set to 'assets/icon.icns' if you create an icon
+    icon='assets/space-debris.png',
     bundle_identifier='com.spacedebris.game',
     info_plist={
         'CFBundleName': 'Space Debris',

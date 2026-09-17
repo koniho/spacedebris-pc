@@ -52,8 +52,20 @@ a = Analysis(
 
 # Retain only plugin families used for rendering and audio playback.
 qt_plugin_families = {'platforms', 'imageformats', 'audio', 'mediaservice', 'playlistformats'}
-unused_qt_libraries = ('qt5qml', 'qtqml.framework', 'qt5quick', 'qtquick.framework',
-                       'qt5websockets', 'qtwebsockets.framework')
+unused_qt_libraries = ('qt5qml', 'qtqml.framework', 'qtqmlmodels.framework',
+                       'qt5quick', 'qtquick.framework', 'qt5websockets',
+                       'qtwebsockets.framework')
+unused_qt_aliases = {'qtqml', 'qtqmlmodels', 'qtquick', 'qtwebsockets'}
+
+
+def is_unused_qt_entry(entry):
+    destination = entry[0].replace('\\', '/').lower()
+    return (
+        any(name in destination for name in unused_qt_libraries)
+        or destination.rsplit('/', 1)[-1] in unused_qt_aliases
+    )
+
+
 a.binaries = [
     entry for entry in a.binaries
     if (
@@ -64,8 +76,9 @@ a.binaries = [
             and 'qwebgl' not in entry[0].lower()
         )
     )
-    and not any(name in entry[0].lower() for name in unused_qt_libraries)
+    and not is_unused_qt_entry(entry)
 ]
+a.datas = [entry for entry in a.datas if not is_unused_qt_entry(entry)]
 
 pyz = PYZ(a.pure)
 

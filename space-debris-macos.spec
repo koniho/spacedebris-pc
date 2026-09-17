@@ -85,7 +85,7 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name='Space Debris.app',
-    icon='assets/space-debris.png',
+    icon='assets/space-debris.icns',
     bundle_identifier='com.spacedebris.game',
     info_plist={
         'CFBundleName': 'Space Debris',

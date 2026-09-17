@@ -88,8 +88,14 @@ class WaveTransition:
         self.current_y = 400
         self._dt = 0.0
 
-        # Pip slide-in animation: start off-screen right, slide in after title arrives
-        self.pip_x_offset = 500  # Start off-screen to the right
+        # Start beyond the actual visible bounds. With a maximized widescreen
+        # window, the aspect-locked view can be substantially wider than the
+        # nominal -400..400 design range.
+        visible_x_range = self.view.viewRange()[0]
+        visible_half_width = max(abs(visible_x_range[0]), abs(visible_x_range[1]))
+        pip_group_half_width = ((WAVES_PER_BOSS - 1) * self.pip_spacing) / 2
+        self.pip_start_offset = visible_half_width + pip_group_half_width + 20
+        self.pip_x_offset = self.pip_start_offset
         self.pip_slide_duration = 0.4
         self.pip_slide_timer = 0.0
         self.pip_sliding_in = False
@@ -659,7 +665,7 @@ class WaveTransition:
                 self.pip_slide_timer += dt
                 t = min(self.pip_slide_timer / self.pip_slide_duration, 1.0)
                 eased = 1 - (1 - t) ** 3  # Ease-out
-                self.pip_x_offset = 500 * (1 - eased)
+                self.pip_x_offset = self.pip_start_offset * (1 - eased)
                 if t >= 1.0:
                     self.pip_x_offset = 0
                     self.pip_arrived = True

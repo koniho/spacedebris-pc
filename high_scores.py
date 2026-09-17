@@ -6,6 +6,8 @@ from dataclasses import dataclass, asdict
 from datetime import datetime
 from typing import List, Optional
 
+from app_paths import get_user_data_dir
+
 
 @dataclass
 class HighScoreEntry:
@@ -26,7 +28,7 @@ class HighScoreBoard:
     MAX_ENTRIES = 10
 
     def __init__(self):
-        self.config_dir = os.path.join(os.path.expanduser("~"), ".space_debris")
+        self.config_dir = str(get_user_data_dir())
         self.filepath = os.path.join(self.config_dir, "high_scores.json")
         self.entries: List[HighScoreEntry] = []
         self.load()

@@ -179,6 +179,11 @@ def main():
         help="Enable diagnostic console logging",
     )
     parser.add_argument(
+        "--smoke-test",
+        action="store_true",
+        help=argparse.SUPPRESS,
+    )
+    parser.add_argument(
         "-a",
         "--no-antialias",
         action="store_false",
@@ -197,6 +202,9 @@ def main():
     window = SpaceDebrisWindow(antialias=args.antialias, debug=args.debug)
 
     window.show()
+    if args.smoke_test:
+        QTimer.singleShot(750, window.close)
+        QTimer.singleShot(1000, app.quit)
     sys.exit(app.exec_())
 
 

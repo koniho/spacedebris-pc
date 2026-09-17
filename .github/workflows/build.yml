@@ -100,15 +100,13 @@ jobs:
       - name: Smoke test Linux package
         if: matrix.platform == 'linux'
         run: |
-          xcb_plugin="$(find "dist/Space Debris" -name 'libqxcb.so' -print -quit)"
-          ldd "$xcb_plugin"
           set +e
           smoke_output="$(xvfb-run -a sh -c '
             openbox >/tmp/space-debris-openbox.log 2>&1 &
             window_manager_pid=$!
             trap "kill $window_manager_pid" EXIT
             sleep 1
-            QT_DEBUG_PLUGINS=1 "$1" --smoke-test
+            "$1" --smoke-test
           ' sh "dist/Space Debris/Space Debris" 2>&1)"
           smoke_status=$?
           set -e

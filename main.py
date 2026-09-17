@@ -4,7 +4,7 @@
 import os
 import sys
 import argparse
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow
 from PyQt5.QtCore import QTimer, Qt, QElapsedTimer
 from PyQt5.QtGui import QKeyEvent
 import pyqtgraph as pg
@@ -31,10 +31,12 @@ QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
 class SpaceDebrisWindow(QMainWindow):
     """Main game window."""
 
-    def __init__(self, antialias=False):
+    def __init__(self, antialias=False, debug=False):
         super().__init__()
+        self.fps_label = None
         self.setWindowTitle("Space Debris")
         self.resize(1200, 800)
+        self.debug = debug
         # Set up PyQtGraph
         pg.setConfigOptions(antialias=antialias)
 
@@ -51,7 +53,7 @@ class SpaceDebrisWindow(QMainWindow):
         self.view.setRange(xRange=[-400, 400], yRange=[-300, 300])
         self.view.setMouseEnabled(x=False, y=False)
 
-        self.engine = GameEngine(self.view)
+        self.engine = GameEngine(self.view, debug=debug)
 
         # Set up game timer
         self.timer = QTimer()
@@ -63,11 +65,45 @@ class SpaceDebrisWindow(QMainWindow):
         self.elapsed_timer.start()
         self.last_time = 0
 
+        self.fps_frame_count = 0
+        self.fps_sample_start = 0
+        if self.debug:
+            self.fps_label = QLabel("FPS: --", self)
+            self.fps_label.setStyleSheet(
+                "color: #00ffff; background-color: rgba(0, 0, 0, 160);"
+                " padding: 4px 7px; font-family: monospace; font-weight: bold;"
+            )
+            self.fps_label.setAttribute(Qt.WA_TransparentForMouseEvents)
+            self.fps_label.adjustSize()
+            self._position_fps_label()
+
+    def _position_fps_label(self):
+        """Keep the debug FPS counter in the top-right corner."""
+        if self.fps_label is not None:
+            margin = 10
+            self.fps_label.move(self.width() - self.fps_label.width() - margin, margin)
+
+    def resizeEvent(self, event):
+        """Reposition debug overlays when the window changes size."""
+        super().resizeEvent(event)
+        self._position_fps_label()
+
     def update_game(self):
         """Update game state."""
         current_time = self.elapsed_timer.elapsed()
         dt = (current_time - self.last_time) / 1000.0  # Convert to seconds
         self.last_time = current_time
+
+        if self.fps_label is not None:
+            self.fps_frame_count += 1
+            sample_duration = current_time - self.fps_sample_start
+            if sample_duration >= 500:
+                fps = self.fps_frame_count * 1000.0 / sample_duration
+                self.fps_label.setText(f"FPS: {fps:5.1f}")
+                self.fps_label.adjustSize()
+                self._position_fps_label()
+                self.fps_frame_count = 0
+                self.fps_sample_start = current_time
 
         # Limit delta time to prevent huge jumps
         dt = min(dt, 0.05)
@@ -158,7 +194,7 @@ def main():
         set_global_seed(args.seed)
 
     app = QApplication(sys.argv)
-    window = SpaceDebrisWindow(antialias=args.antialias)
+    window = SpaceDebrisWindow(antialias=args.antialias, debug=args.debug)
 
     window.show()
     sys.exit(app.exec_())

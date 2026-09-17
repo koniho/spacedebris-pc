@@ -1,0 +1,16 @@
+{
+  "explosions_enabled": true,
+  "screen_shake_enabled": true,
+  "lasers_enabled": true,
+  "explosion_duration_multiplier": 1.0,
+  "explosion_size_multiplier": 1.0,
+  "shake_intensity_multiplier": 1.0,
+  "shake_duration_base": 0.3,
+  "shake_magnitude_base": 5.0,
+  "laser_duration": 0.2,
+  "enable_sinc_explosions": true,
+  "enable_radial_explosions": true,
+  "enable_ripple_explosions": true,
+  "enable_colorshift_explosions": true,
+  "show_fps": true
+}

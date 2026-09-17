@@ -201,10 +201,15 @@ def main():
     app = QApplication(sys.argv)
     window = SpaceDebrisWindow(antialias=args.antialias, debug=args.debug)
 
-    window.show()
+    window.showFullScreen()
     if args.smoke_test:
-        QTimer.singleShot(750, window.close)
-        QTimer.singleShot(1000, app.quit)
+
+        def finish_smoke_test():
+            exit_code = 0 if window.isFullScreen() else 1
+            window.close()
+            app.exit(exit_code)
+
+        QTimer.singleShot(750, finish_smoke_test)
     sys.exit(app.exec_())
 
 

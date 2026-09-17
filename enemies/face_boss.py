@@ -1,6 +1,7 @@
 """Face boss with SVG morphing visuals."""
 
 import math
+from debug_log import debug_print as print
 import re
 from typing import Callable, List, Optional, Tuple
 

@@ -1,6 +1,7 @@
 # enemies/chaotic_cloud_boss.py
 
 import math
+from debug_log import debug_print as print
 import random
 from typing import List, Tuple, Optional
 import numpy as np

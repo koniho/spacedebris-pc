@@ -6,6 +6,7 @@ import pyqtgraph as pg
 from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtCore import Qt
 import random_manager
+from debug_log import debug_print as print
 import numpy as np
 from config import BUTTON_COLORS, ALL_BUTTONS, DifficultyLevel
 from config import LEFT_HAND_BUTTONS, RIGHT_HAND_BUTTONS, get_button_label
